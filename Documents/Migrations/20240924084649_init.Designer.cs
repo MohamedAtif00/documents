@@ -4,6 +4,7 @@ using Documents.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Documents.Migrations
 {
     [DbContext(typeof(DocumentDbContext))]
-    partial class DocumentDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240924084649_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,9 +27,11 @@ namespace Documents.Migrations
 
             modelBuilder.Entity("Documents.Model.Comment", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -38,24 +43,23 @@ namespace Documents.Migrations
                     b.Property<int>("DocumentId")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("DocumentId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DocumentId1");
+                    b.HasIndex("DocumentId");
 
                     b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Documents.Model.Document", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("FilePath")
                         .HasColumnType("nvarchar(max)");
@@ -78,21 +82,21 @@ namespace Documents.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("4ff07ef7-0ed9-4b24-9637-c70d59bc9f2a"),
+                            Id = 1,
                             FilePath = "/docs/Document1.pdf",
                             Name = "Document1.pdf",
                             Status = "Reviewed"
                         },
                         new
                         {
-                            Id = new Guid("0e4a27cc-1034-4b78-b460-aad0499229ad"),
+                            Id = 2,
                             FilePath = "/docs/Document2.pdf",
                             Name = "Document2.pdf",
                             Status = "Signed"
                         },
                         new
                         {
-                            Id = new Guid("3d638ace-fc8f-453d-b298-06f6d9ba3bcf"),
+                            Id = 3,
                             FilePath = "/docs/Document3.pdf",
                             Name = "Document3.pdf",
                             Status = "Hold"
@@ -300,7 +304,7 @@ namespace Documents.Migrations
                 {
                     b.HasOne("Documents.Model.Document", "Document")
                         .WithMany("Comments")
-                        .HasForeignKey("DocumentId1")
+                        .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

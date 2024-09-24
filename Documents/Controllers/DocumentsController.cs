@@ -42,6 +42,9 @@ namespace Documents.Controllers
         public async Task<ActionResult<Document>> GetDocument(int id)
         {
             var document = await _context.Documents.FindAsync(id);
+            document.Status = document.Status;
+
+            await _context.SaveChangesAsync();
 
             if (document == null)
             {
@@ -85,7 +88,7 @@ namespace Documents.Controllers
 
         // PUT: api/Documents/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDocument(int id, [FromBody] Document updatedDocument)
+        public async Task<IActionResult> UpdateDocument(Guid id, [FromBody] Document updatedDocument)
         {
             if (id != updatedDocument.Id)
             {
@@ -142,6 +145,7 @@ namespace Documents.Controllers
         }
 
 
+
         // DELETE: api/Documents/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDocument(int id)
@@ -158,7 +162,53 @@ namespace Documents.Controllers
 
             return NoContent();
         }
+        [HttpPost("{documentId}/add-comment")]
+        public IActionResult AddComment(int documentId, [FromBody] AddCommentRequest request)
+        {
+            // Find the document by id
+            var document = _context.Documents.Find(documentId);
+            if (document == null)
+            {
+                return NotFound("Document not found.");
+            }
+
+            // Find the user (assuming the userId is passed in the request)
+            var user = _context.Users.Find(request.UserId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            // Create the new comment and associate it with the document and user
+            var comment = new Comment
+            {
+                Content = request.Comment,
+                DocumentId = documentId,
+                UserId = request.UserId,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            // Add the comment to the database
+            _context.Comments.Add(comment);
+
+            // Change the document status to "Signed"
+            document.Status = "Signed";
+
+            // Save changes
+            _context.SaveChanges();
+
+            return Ok(new { message = "Comment added and document status changed to Signed." });
+        }
     }
 
-    public record AddDocumentDto(string name,string status,IFormFile document);
+
+
 }
+public record AddDocumentDto(string name,string status,IFormFile document);
+
+public class AddCommentRequest
+{
+    public string Comment { get; set; }
+    public Guid UserId { get; set; } // The ID of the user adding the comment
+}
+

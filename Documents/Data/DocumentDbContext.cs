@@ -1,11 +1,14 @@
 ﻿using Documents.Model;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Documents.Data
 {
-    public class DocumentDbContext : DbContext
+    public class DocumentDbContext : IdentityDbContext<IdentityUser<Guid>,IdentityRole<Guid>,Guid>
     {
         public DbSet<Document> Documents { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         public DocumentDbContext(DbContextOptions<DocumentDbContext> options) : base(options)
         {
@@ -14,10 +17,12 @@ namespace Documents.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Document>().HasData(
-                new Document { Id = 1, Name = "Document1.pdf", Status = "Reviewed", FilePath = "/docs/Document1.pdf",Comments =new List<string> { "comment" } },
-                new Document { Id = 2, Name = "Document2.pdf", Status = "Signed", FilePath = "/docs/Document2.pdf",Comments= new List<string> { "comment" } },
-                new Document { Id = 3, Name = "Document3.pdf", Status = "Hold", FilePath = "/docs/Document3.pdf",Comments= new List<string> { "comment" } }
+                new Document { Id = Guid.NewGuid(), Name = "Document1.pdf", Status = "Reviewed", FilePath = "/docs/Document1.pdf"},
+                new Document { Id = Guid.NewGuid(), Name = "Document2.pdf", Status = "Signed", FilePath = "/docs/Document2.pdf"},
+                new Document { Id = Guid.NewGuid(), Name = "Document3.pdf", Status = "Hold", FilePath = "/docs/Document3.pdf"}
             );
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
