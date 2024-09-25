@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Documents.Migrations
 {
     [DbContext(typeof(DocumentDbContext))]
-    [Migration("20240924084649_init")]
+    [Migration("20240924093007_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -27,11 +27,9 @@ namespace Documents.Migrations
 
             modelBuilder.Entity("Documents.Model.Comment", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -40,8 +38,8 @@ namespace Documents.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DocumentId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -55,11 +53,9 @@ namespace Documents.Migrations
 
             modelBuilder.Entity("Documents.Model.Document", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("FilePath")
                         .HasColumnType("nvarchar(max)");
@@ -78,29 +74,6 @@ namespace Documents.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Documents");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            FilePath = "/docs/Document1.pdf",
-                            Name = "Document1.pdf",
-                            Status = "Reviewed"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            FilePath = "/docs/Document2.pdf",
-                            Name = "Document2.pdf",
-                            Status = "Signed"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            FilePath = "/docs/Document3.pdf",
-                            Name = "Document3.pdf",
-                            Status = "Hold"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -302,13 +275,11 @@ namespace Documents.Migrations
 
             modelBuilder.Entity("Documents.Model.Comment", b =>
                 {
-                    b.HasOne("Documents.Model.Document", "Document")
+                    b.HasOne("Documents.Model.Document", null)
                         .WithMany("Comments")
                         .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Document");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

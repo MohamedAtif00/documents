@@ -35,10 +35,7 @@ namespace Documents.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DocumentId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("DocumentId1")
+                    b.Property<Guid>("DocumentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
@@ -46,7 +43,7 @@ namespace Documents.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DocumentId1");
+                    b.HasIndex("DocumentId");
 
                     b.ToTable("Comments");
                 });
@@ -74,29 +71,6 @@ namespace Documents.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Documents");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("4ff07ef7-0ed9-4b24-9637-c70d59bc9f2a"),
-                            FilePath = "/docs/Document1.pdf",
-                            Name = "Document1.pdf",
-                            Status = "Reviewed"
-                        },
-                        new
-                        {
-                            Id = new Guid("0e4a27cc-1034-4b78-b460-aad0499229ad"),
-                            FilePath = "/docs/Document2.pdf",
-                            Name = "Document2.pdf",
-                            Status = "Signed"
-                        },
-                        new
-                        {
-                            Id = new Guid("3d638ace-fc8f-453d-b298-06f6d9ba3bcf"),
-                            FilePath = "/docs/Document3.pdf",
-                            Name = "Document3.pdf",
-                            Status = "Hold"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -298,13 +272,11 @@ namespace Documents.Migrations
 
             modelBuilder.Entity("Documents.Model.Comment", b =>
                 {
-                    b.HasOne("Documents.Model.Document", "Document")
+                    b.HasOne("Documents.Model.Document", null)
                         .WithMany("Comments")
-                        .HasForeignKey("DocumentId1")
+                        .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Document");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

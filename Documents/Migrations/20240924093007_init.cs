@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Documents.Migrations
 {
     /// <inheritdoc />
@@ -56,8 +54,7 @@ namespace Documents.Migrations
                 name: "Documents",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FilePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -178,11 +175,10 @@ namespace Documents.Migrations
                 name: "Comments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DocumentId = table.Column<int>(type: "int", nullable: false),
+                    DocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -194,16 +190,6 @@ namespace Documents.Migrations
                         principalTable: "Documents",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Documents",
-                columns: new[] { "Id", "FilePath", "Name", "SignedDate", "Status" },
-                values: new object[,]
-                {
-                    { 1, "/docs/Document1.pdf", "Document1.pdf", null, "Reviewed" },
-                    { 2, "/docs/Document2.pdf", "Document2.pdf", null, "Signed" },
-                    { 3, "/docs/Document3.pdf", "Document3.pdf", null, "Hold" }
                 });
 
             migrationBuilder.CreateIndex(

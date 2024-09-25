@@ -39,7 +39,7 @@ namespace Documents.Controllers
 
         // GET: api/Documents/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Document>> GetDocument(int id)
+        public async Task<ActionResult<Document>> GetDocument(Guid id)
         {
             var document = await _context.Documents.FindAsync(id);
             document.Status = document.Status;
@@ -54,7 +54,7 @@ namespace Documents.Controllers
             return Ok(document);
         }
         [HttpGet("{id}/file")]
-        public IActionResult GetDocumentFile(int id)
+        public IActionResult GetDocumentFile(Guid id)
         {
             // Find the document by id in the database
             var document = _context.Documents.Find(id);
@@ -148,7 +148,7 @@ namespace Documents.Controllers
 
         // DELETE: api/Documents/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDocument(int id)
+        public async Task<IActionResult> DeleteDocument(Guid id)
         {
             var document = await _context.Documents.FindAsync(id);
 
@@ -163,7 +163,7 @@ namespace Documents.Controllers
             return NoContent();
         }
         [HttpPost("{documentId}/add-comment")]
-        public IActionResult AddComment(int documentId, [FromBody] AddCommentRequest request)
+        public IActionResult AddComment(Guid documentId, [FromBody] AddCommentRequest request)
         {
             // Find the document by id
             var document = _context.Documents.Find(documentId);
